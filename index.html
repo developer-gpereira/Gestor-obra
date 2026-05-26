@@ -1,0 +1,2274 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-[#f4f6fc]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Custos - Obra</title>
+    <!-- Tailwind CSS para estilização moderna e responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f4ff',
+                            100: '#dbeafe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            900: '#1e3a8a',
+                            darkBg: '#0f172a',
+                            darkCard: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js para Relatórios Visuais -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar para visual premium */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="h-full text-slate-800 dark:text-slate-200 transition-colors duration-200">
+
+    <!-- CONTAINER DA SPA -->
+    <div class="flex h-full overflow-hidden">
+        
+        <!-- SIDEBAR DE NAVEGAÇÃO -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 flex flex-col w-72 bg-[#111c43] text-white transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:static lg:inset-auto">
+            <!-- Header da Marca -->
+            <div class="flex items-center gap-3 px-6 py-5 border-b border-slate-700/50">
+                <div class="flex items-center justify-center w-10 h-10 bg-brand-500 rounded-xl text-white shadow-md shadow-brand-500/20">
+                    <i class="fa-solid fa-house-chimney text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">Obra Minha Casa</h1>
+                    <span class="text-xs text-slate-400 font-medium">Reforma</span>
+                </div>
+                <button onclick="UI.toggleSidebar()" class="lg:hidden ml-auto text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Links de Navegação da SPA -->
+            <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+                <button onclick="Router.navigate('dashboard')" data-nav="dashboard" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard
+                </button>
+                <button onclick="Router.navigate('materials')" data-nav="materials" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-boxes-stacked w-5 text-center"></i> Itens / Materiais
+                </button>
+                <button onclick="Router.navigate('purchases')" data-nav="purchases" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-cart-shopping w-5 text-center"></i> Compras
+                </button>
+                <button onclick="Router.navigate('expenses')" data-nav="expenses" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-dollar-sign w-5 text-center"></i> Despesas
+                </button>
+                <button onclick="Router.navigate('stages')" data-nav="stages" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-bars-progress w-5 text-center"></i> Etapas da Obra
+                </button>
+                <button onclick="Router.navigate('suppliers')" data-nav="suppliers" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-truck-field w-5 text-center"></i> Fornecedores
+                </button>
+                <button onclick="Router.navigate('reports')" data-nav="reports" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Relatórios
+                </button>
+                <button onclick="Router.navigate('settings')" data-nav="settings" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-sliders w-5 text-center"></i> Configurações
+                </button>
+            </nav>
+
+            <!-- Resumo Financeiro no rodapé da Sidebar -->
+            <div class="p-4 mx-4 mb-6 bg-slate-850/50 border border-slate-700/40 rounded-2xl bg-[#1e293b]/40">
+                <div class="space-y-2 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Orçamento Total:</span>
+                        <span class="font-semibold text-emerald-400" id="sb-total-budget">R$ 0,00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Gasto Atual:</span>
+                        <span class="font-semibold text-amber-500" id="sb-current-spend">R$ 0,00</span>
+                    </div>
+                    <div class="flex justify-between border-t border-slate-700/50 pt-2">
+                        <span class="text-slate-400">Saldo:</span>
+                        <span class="font-semibold" id="sb-balance">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <!-- Alerta de limite de orçamento atingido -->
+                <div id="sb-alert-box" class="mt-3 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs flex gap-2 items-center">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span id="sb-alert-text">Calculando...</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- BACKGROUND OVERLAY PARA DISPOSITIVOS MÓVEIS -->
+        <div id="sidebar-overlay" onclick="UI.toggleSidebar()" class="fixed inset-0 z-40 hidden bg-slate-900/60 backdrop-blur-sm lg:hidden"></div>
+
+        <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
+        <main class="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-slate-950">
+            
+            <!-- HEADER GLOBAL -->
+            <header class="flex items-center justify-between h-16 px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0">
+                <div class="flex items-center gap-3">
+                    <button onclick="UI.toggleSidebar()" class="p-2 -ml-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 lg:hidden">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-circle-nodes text-brand-500 text-lg"></i>
+                        <h2 id="page-title" class="text-lg font-bold text-slate-800 dark:text-white">Dashboard</h2>
+                    </div>
+                </div>
+
+                <!-- Controles Globais do Topo -->
+                <div class="flex items-center gap-4">
+                    <button onclick="UI.toggleTheme()" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-all duration-200" title="Alternar Tema Escuro">
+                        <i id="theme-icon" class="fa-solid fa-moon"></i>
+                    </button>
+                    <button onclick="UI.showNewProjectModal()" class="flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-xl text-sm shadow-md shadow-brand-500/10 transition-all duration-200">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Nova Obra</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- CONTAINER CENTRAL ONDE É APLICADA A RENDERIZAÇÃO DA SPA -->
+            <section id="app-content" class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- Conteúdo dinâmico injetado via JS -->
+            </section>
+        </main>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- SISTEMA DE MODAL GLOBAL REUTILIZÁVEL -->
+    <div id="modal-container" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-slate-900/60 backdrop-blur-xs p-4">
+        <div id="modal-content" class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl transform scale-95 opacity-0 transition-all duration-300 overflow-hidden flex flex-col max-h-[90vh]">
+            <!-- Header do Modal -->
+            <div class="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+                <h3 id="modal-title" class="font-bold text-slate-800 dark:text-white text-base">Título</h3>
+                <button onclick="Modal.close()" class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-white transition-colors duration-200">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <!-- Body do Modal -->
+            <div id="modal-body" class="p-6 overflow-y-auto flex-1 text-sm text-slate-600 dark:text-slate-300">
+                <!-- Campos dinâmicos do formulário -->
+            </div>
+            <!-- Footer do Modal -->
+            <div id="modal-footer" class="flex items-center justify-end gap-3 p-5 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+                <!-- Botões de Ações -->
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGICA E CORE JS DO SISTEMA -->
+    <script>
+        // 1. DADOS DE DEMONSTRAÇÃO (Estrutura Inicial Conforme Imagem de Referência)
+        const DEFAULT_STATE = {
+            settings: {
+                theme: 'light',
+                totalBudget: 25000.00
+            },
+            materials: [
+                { id: '1', name: 'Piso Cerâmico', category: 'Acabamento', unit: 'm²', quantity: 35.5, loss: 10, unitPrice: 89.00, total: 3499.75 },
+                { id: '2', name: 'Tinta Acrílica Branca', category: 'Acabamento', unit: 'L', quantity: 20.0, loss: 5, unitPrice: 22.00, total: 462.00 },
+                { id: '3', name: 'Cimento', category: 'Materiais Básicos', unit: 'kg', quantity: 300.0, loss: 2, unitPrice: 0.85, total: 260.10 },
+                { id: '4', name: 'Tijolo 6 furos', category: 'Materiais Básicos', unit: 'un', quantity: 1000, loss: 0, unitPrice: 1.20, total: 1200.00 },
+                { id: '5', name: 'Tubo PVC 25mm', category: 'Hidráulica', unit: 'm', quantity: 40.0, loss: 3, unitPrice: 6.90, total: 284.28 },
+                { id: '6', name: 'Areia Média', category: 'Materiais Básicos', unit: 'm³', quantity: 2.50, loss: 5, unitPrice: 180.00, total: 472.50 }
+            ],
+            purchases: [
+                { id: '1', name: 'Cimento', quantity: '150 kg', supplier: 'Depósito Real', priority: 'Alta', status: 'Pendente', price: 127.50 },
+                { id: '2', name: 'Tinta Acrílica Branca', quantity: '8 L', supplier: 'Tintas & Cia', priority: 'Média', status: 'Pendente', price: 176.00 },
+                { id: '3', name: 'Piso Cerâmico', quantity: '2.3 m²', supplier: 'Pisos Ideal', priority: 'Alta', status: 'Pendente', price: 204.70 }
+            ],
+            expenses: [
+                { id: '1', description: 'Frete de Areia', category: 'Frete', amount: 120.00, date: '2026-05-10', notes: 'Transporte de materiais básicos' },
+                { id: '2', description: 'Mão de Obra Contra-piso', category: 'Mão de Obra', amount: 950.00, date: '2026-05-12', notes: 'Diária do pedreiro e assistente' },
+                { id: '3', description: 'Aluguel de Betoneira', category: 'Ferramentas', amount: 250.00, date: '2026-05-15', notes: 'Período de 15 dias' }
+            ],
+            suppliers: [
+                { id: '1', name: 'Depósito Real', phone: '(11) 98888-7777', notes: 'Contato: Marcos. Desconto de 5% no PIX.', rating: 5 },
+                { id: '2', name: 'Tintas & Cia', phone: '(11) 97777-6666', notes: 'Contato: Sandra. Frete grátis na região.', rating: 4 },
+                { id: '3', name: 'Pisos Ideal', phone: '(11) 96666-5555', notes: 'Variedades de acabamentos premium.', rating: 5 }
+            ],
+            stages: [
+                { id: '1', name: 'Estrutura & Alvenaria', responsible: 'Eng. Roberto', startDate: '2026-04-01', endDate: '2026-04-25', progress: 100, status: 'Concluído' },
+                { id: '2', name: 'Instalações Hidráulicas', responsible: 'Carlos Encanador', startDate: '2026-04-26', endDate: '2026-05-10', progress: 90, status: 'Em andamento' },
+                { id: '3', name: 'Revestimento e Acabamento', responsible: 'Mestre Gilberto', startDate: '2026-05-11', endDate: '2026-06-05', progress: 35, status: 'Em andamento' }
+            ]
+        };
+
+        // 2. STORAGE SERVICE (Persistência no LocalStorage do Navegador)
+        const StorageService = {
+            get() {
+                try {
+                    const data = localStorage.getItem('obra_custos_app');
+                    return data ? JSON.parse(data) : null;
+                } catch (e) {
+                    console.error("Erro ao ler LocalStorage", e);
+                    return null;
+                }
+            },
+            save(state) {
+                try {
+                    localStorage.setItem('obra_custos_app', JSON.stringify(state));
+                } catch (e) {
+                    console.error("Erro ao escrever no LocalStorage", e);
+                }
+            },
+            reset() {
+                localStorage.removeItem('obra_custos_app');
+            }
+        };
+
+        // 3. ESTADO GLOBAL REATIVO (AppState)
+        const AppState = {
+            state: {},
+            listeners: [],
+
+            init() {
+                const stored = StorageService.get();
+                if (stored) {
+                    this.state = stored;
+                } else {
+                    this.state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+                    StorageService.save(this.state);
+                }
+                this.notify();
+            },
+
+            subscribe(listener) {
+                this.listeners.push(listener);
+            },
+
+            notify() {
+                StorageService.save(this.state);
+                this.listeners.forEach(fn => fn(this.state));
+            },
+
+            getTotals() {
+                const totalBudget = this.state.settings.totalBudget;
+                const materialsTotal = this.state.materials.reduce((acc, curr) => acc + (curr.total || 0), 0);
+                const expensesTotal = this.state.expenses.reduce((acc, curr) => acc + (curr.amount || 0), 0);
+                
+                const totalSpend = materialsTotal + expensesTotal;
+                const balance = totalBudget - totalSpend;
+                const percentUsed = totalBudget > 0 ? (totalSpend / totalBudget) * 100 : 0;
+                const isOverBudget = totalSpend > totalBudget;
+
+                return {
+                    totalBudget,
+                    totalSpend,
+                    balance,
+                    percentUsed,
+                    isOverBudget
+                };
+            }
+        };
+
+        // 4. VALIDATORS & FORMATTERS
+        const Validators = {
+            parseFloat(val) {
+                if (typeof val === 'number') return val;
+                if (!val) return 0;
+                let formatted = val.toString().replace(/\s/g, '').replace(/\./g, '').replace(',', '.');
+                let parsed = parseFloat(formatted);
+                return isNaN(parsed) ? 0 : parsed;
+            },
+            formatCurrency(val) {
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0);
+            },
+            formatNumber(val, decimals = 2) {
+                return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(val || 0);
+            }
+        };
+
+        // 5. TOAST NOTIFICATION SYSTEM
+        const Toast = {
+            show(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                if (!container) return;
+
+                const toast = document.createElement('div');
+                toast.className = `flex items-center gap-3 px-4 py-3.5 rounded-xl border shadow-lg text-sm transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto`;
+                
+                let icon = '';
+                if (type === 'success') {
+                    toast.className += ' bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/40';
+                    icon = '<i class="fa-solid fa-circle-check text-emerald-500"></i>';
+                } else if (type === 'error') {
+                    toast.className += ' bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800/40';
+                    icon = '<i class="fa-solid fa-circle-xmark text-rose-500"></i>';
+                } else {
+                    toast.className += ' bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/40';
+                    icon = '<i class="fa-solid fa-circle-exclamation text-amber-500"></i>';
+                }
+
+                toast.innerHTML = `
+                    <span class="text-base">${icon}</span>
+                    <p class="font-medium">${message}</p>
+                `;
+
+                container.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-2', 'opacity-0');
+                }, 50);
+
+                setTimeout(() => {
+                    toast.classList.add('translate-y-2', 'opacity-0');
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 300);
+                }, 3500);
+            }
+        };
+
+        // 6. REUSABLE MODAL SYSTEM
+        const Modal = {
+            open(title, bodyHTML, footerHTML) {
+                const container = document.getElementById('modal-container');
+                const content = document.getElementById('modal-content');
+                
+                document.getElementById('modal-title').textContent = title;
+                document.getElementById('modal-body').innerHTML = bodyHTML;
+                document.getElementById('modal-footer').innerHTML = footerHTML;
+
+                container.classList.remove('hidden');
+                setTimeout(() => {
+                    content.classList.remove('scale-95', 'opacity-0');
+                }, 10);
+            },
+            close() {
+                const container = document.getElementById('modal-container');
+                const content = document.getElementById('modal-content');
+
+                content.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    container.classList.add('hidden');
+                }, 300);
+            }
+        };
+
+        // 7. CHART.JS MANAGER
+        const Charts = {
+            instances: {},
+            
+            destroy(id) {
+                if (this.instances[id]) {
+                    this.instances[id].destroy();
+                    delete this.instances[id];
+                }
+            },
+
+            renderCategoryDistribution(canvasId, data) {
+                this.destroy(canvasId);
+                const ctx = document.getElementById(canvasId);
+                if (!ctx) return;
+
+                const isDark = document.documentElement.classList.contains('dark');
+
+                this.instances[canvasId] = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(data),
+                        datasets: [{
+                            data: Object.values(data),
+                            backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#64748b'],
+                            borderWidth: isDark ? 2 : 1,
+                            borderColor: isDark ? '#1e293b' : '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        cutout: '70%'
+                    }
+                });
+            },
+
+            renderBarComparison(canvasId, labels, expected, actual) {
+                this.destroy(canvasId);
+                const ctx = document.getElementById(canvasId);
+                if (!ctx) return;
+
+                const isDark = document.documentElement.classList.contains('dark');
+                const gridColor = isDark ? '#334155' : '#e2e8f0';
+                const textColor = isDark ? '#94a3b8' : '#475569';
+
+                this.instances[canvasId] = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Previsto (R$)',
+                                data: expected,
+                                backgroundColor: '#93c5fd',
+                                borderRadius: 6
+                            },
+                            {
+                                label: 'Realizado (R$)',
+                                data: actual,
+                                backgroundColor: '#2563eb',
+                                borderRadius: 6
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: textColor,
+                                    font: { family: 'Inter', size: 12 }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                grid: { color: gridColor },
+                                ticks: { color: textColor }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: textColor }
+                            }
+                        }
+                    }
+                });
+            }
+        };
+
+        // 8. SPA ROUTER SYSTEM
+        const Router = {
+            currentRoute: 'dashboard',
+
+            init() {
+                const hash = window.location.hash.replace('#', '');
+                this.navigate(hash || 'dashboard');
+
+                window.addEventListener('hashchange', () => {
+                    const newHash = window.location.hash.replace('#', '');
+                    if (newHash && newHash !== this.currentRoute) {
+                        this.navigate(newHash);
+                    }
+                });
+            },
+
+            navigate(route) {
+                this.currentRoute = route;
+                window.location.hash = route;
+                
+                // Toggle classes de link ativo
+                document.querySelectorAll('[data-nav]').forEach(el => {
+                    const activeClass = 'bg-brand-500 text-white shadow-md shadow-brand-500/10';
+                    const inactiveClass = 'text-slate-300 hover:bg-slate-800 hover:text-white';
+                    
+                    if (el.getAttribute('data-nav') === route) {
+                        el.className = el.className.replace(inactiveClass, '').trim() + ' ' + activeClass;
+                    } else {
+                        el.className = el.className.replace(activeClass, '').trim() + ' ' + inactiveClass;
+                    }
+                });
+
+                const titleMap = {
+                    dashboard: 'Dashboard',
+                    materials: 'Itens / Materiais',
+                    purchases: 'Planejamento de Compras',
+                    expenses: 'Registro de Despesas',
+                    stages: 'Etapas da Obra',
+                    suppliers: 'Cadastro de Fornecedores',
+                    reports: 'Relatórios Consolidados',
+                    settings: 'Configurações'
+                };
+                document.getElementById('page-title').textContent = titleMap[route] || 'Gestão de Custos';
+
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar && !sidebar.classList.contains('-translate-x-full')) {
+                    this.closeMobileSidebar();
+                }
+
+                UI.renderCurrentPage();
+            },
+
+            closeMobileSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        };
+
+        // 9. CORE UI INTERACTION & RENDERING
+        const UI = {
+            editingMaterialId: null,
+
+            init() {
+                this.updateSidebarSummary();
+                this.renderCurrentPage();
+                this.applySavedTheme();
+            },
+
+            updateSidebarSummary() {
+                const totals = AppState.getTotals();
+                
+                document.getElementById('sb-total-budget').textContent = Validators.formatCurrency(totals.totalBudget);
+                document.getElementById('sb-current-spend').textContent = Validators.formatCurrency(totals.totalSpend);
+                
+                const balEl = document.getElementById('sb-balance');
+                balEl.textContent = Validators.formatCurrency(totals.balance);
+                
+                if (totals.balance < 0) {
+                    balEl.className = "font-semibold text-rose-500";
+                } else {
+                    balEl.className = "font-semibold text-emerald-400";
+                }
+
+                const alertText = document.getElementById('sb-alert-text');
+                const alertBox = document.getElementById('sb-alert-box');
+                
+                if (totals.percentUsed > 100) {
+                    alertBox.className = "mt-3 p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex gap-2 items-center";
+                    alertText.textContent = `Estouro de ${Validators.formatNumber(totals.percentUsed - 100)}%!`;
+                } else {
+                    alertBox.className = "mt-3 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs flex gap-2 items-center";
+                    alertText.textContent = `${Validators.formatNumber(totals.percentUsed, 1)}% do orçamento usado`;
+                }
+            },
+
+            toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                
+                if (sidebar.classList.contains('-translate-x-full')) {
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.classList.remove('hidden');
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+            },
+
+            toggleTheme() {
+                const isDark = document.documentElement.classList.contains('dark');
+                if (isDark) {
+                    document.documentElement.classList.remove('dark');
+                    AppState.state.settings.theme = 'light';
+                    document.getElementById('theme-icon').className = "fa-solid fa-moon";
+                } else {
+                    document.documentElement.classList.add('dark');
+                    AppState.state.settings.theme = 'dark';
+                    document.getElementById('theme-icon').className = "fa-solid fa-sun";
+                }
+                AppState.notify();
+                this.renderCurrentPage();
+            },
+
+            applySavedTheme() {
+                const isDark = AppState.state.settings?.theme === 'dark';
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                    document.getElementById('theme-icon').className = "fa-solid fa-sun";
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.getElementById('theme-icon').className = "fa-solid fa-moon";
+                }
+            },
+
+            showNewProjectModal() {
+                const modalBody = `
+                    <div class="space-y-4">
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Configure o limite financeiro total para o gerenciamento desta reforma.</p>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1.5 text-slate-500">Valor Limite Estimado (R$)</label>
+                            <input type="text" id="new-budget" placeholder="Ex: 25.000,00" value="${AppState.state.settings.totalBudget}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 font-medium">
+                        </div>
+                    </div>
+                `;
+
+                const modalFooter = `
+                    <button onclick="Modal.close()" class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-white">Cancelar</button>
+                    <button onclick="UI.saveNewProject()" class="px-5 py-2 text-sm font-semibold bg-brand-500 hover:bg-brand-600 text-white rounded-xl transition-all">Salvar</button>
+                `;
+
+                Modal.open("Configurar Novo Orçamento", modalBody, modalFooter);
+            },
+
+            saveNewProject() {
+                const budgetInput = document.getElementById('new-budget');
+                const parsedVal = Validators.parseFloat(budgetInput.value);
+                
+                if (parsedVal <= 0) {
+                    Toast.show("Valor de orçamento precisa ser maior que zero.", "error");
+                    return;
+                }
+
+                AppState.state.settings.totalBudget = parsedVal;
+                AppState.notify();
+                Modal.close();
+                this.renderCurrentPage();
+                Toast.show("Orçamento da obra atualizado!");
+            },
+
+            // RENDERIZAÇÃO DAS PÁGINAS (SPA)
+            renderCurrentPage() {
+                const container = document.getElementById('app-content');
+                const route = Router.currentRoute;
+                
+                this.updateSidebarSummary();
+
+                switch(route) {
+                    case 'dashboard':
+                        this.pages.dashboard(container);
+                        break;
+                    case 'materials':
+                        this.pages.materials(container);
+                        break;
+                    case 'purchases':
+                        this.pages.purchases(container);
+                        break;
+                    case 'expenses':
+                        this.pages.expenses(container);
+                        break;
+                    case 'stages':
+                        this.pages.stages(container);
+                        break;
+                    case 'suppliers':
+                        this.pages.suppliers(container);
+                        break;
+                    case 'reports':
+                        this.pages.reports(container);
+                        break;
+                    case 'settings':
+                        this.pages.settings(container);
+                        break;
+                    default:
+                        container.innerHTML = `<p class="p-6 text-center text-slate-500">Página em construção.</p>`;
+                }
+            },
+
+            pages: {
+                dashboard(c) {
+                    const totals = AppState.getTotals();
+                    
+                    const categorySum = {};
+                    AppState.state.materials.forEach(m => {
+                        categorySum[m.category] = (categorySum[m.category] || 0) + m.total;
+                    });
+                    AppState.state.expenses.forEach(e => {
+                        categorySum[e.category] = (categorySum[e.category] || 0) + e.amount;
+                    });
+
+                    if (Object.keys(categorySum).length === 0) {
+                        categorySum['Sem Lançamento'] = 0;
+                    }
+
+                    c.innerHTML = `
+                        <!-- 1. CARDS DE RESUMO DO TOPO -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+                            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl flex items-center justify-between shadow-xs">
+                                <div>
+                                    <span class="text-xs font-semibold text-slate-400 block mb-1">PREVISTO</span>
+                                    <h4 class="text-xl font-bold text-slate-800 dark:text-white">${Validators.formatCurrency(totals.totalBudget)}</h4>
+                                </div>
+                                <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center text-brand-500 text-lg">
+                                    <i class="fa-solid fa-calculator"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl flex items-center justify-between shadow-xs">
+                                <div>
+                                    <span class="text-xs font-semibold text-slate-400 block mb-1">GASTO ATUAL</span>
+                                    <h4 class="text-xl font-bold text-slate-800 dark:text-white">${Validators.formatCurrency(totals.totalSpend)}</h4>
+                                </div>
+                                <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-500 text-lg">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </div>
+                            </div>
+
+                            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-xs">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-semibold text-slate-400 block">% UTILIZADO</span>
+                                    <span class="text-sm font-bold text-amber-500">${Validators.formatNumber(totals.percentUsed, 1)}%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5">
+                                    <div class="bg-amber-500 h-2.5 rounded-full transition-all duration-300" style="width: ${Math.min(totals.percentUsed, 100)}%"></div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl flex items-center justify-between shadow-xs">
+                                <div>
+                                    <span class="text-xs font-semibold text-slate-400 block mb-1">ESTOURO PREVISTO</span>
+                                    <h4 class="text-base font-bold ${totals.isOverBudget ? 'text-rose-500' : 'text-emerald-500'}">
+                                        ${totals.isOverBudget ? 'Sim' : 'Não'}
+                                    </h4>
+                                    <span class="text-[10px] text-slate-400 block">${totals.isOverBudget ? 'Orçamento Excedido' : 'Sob Controle'}</span>
+                                </div>
+                                <div class="w-12 h-12 rounded-2xl ${totals.isOverBudget ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-500' : 'bg-slate-50 dark:bg-slate-800 text-slate-400'} flex items-center justify-center text-lg">
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. GRID PRINCIPAL DE INTERAÇÃO -->
+                        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                            <!-- Formulário Lateral Rápido de Adição -->
+                            <div class="xl:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xs flex flex-col justify-between">
+                                <div>
+                                    <h3 class="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2 text-sm">
+                                        <i class="fa-solid fa-folder-plus text-brand-500"></i>
+                                        Adicionar Item Rápido
+                                    </h3>
+                                    <form id="material-add-form" class="space-y-4">
+                                        <div>
+                                            <label class="block text-xs font-semibold text-slate-400 mb-1">Material</label>
+                                            <input type="text" id="mat-name" required placeholder="Ex: Piso Porcelanato" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                        </div>
+
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-400 mb-1">Categoria</label>
+                                                <select id="mat-category" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none text-xs">
+                                                    <option>Acabamento</option>
+                                                    <option>Materiais Básicos</option>
+                                                    <option>Hidráulica</option>
+                                                    <option>Elétrica</option>
+                                                    <option>Estrutura</option>
+                                                    <option>Outros</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-400 mb-1">Unidade</label>
+                                                <select id="mat-unit" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none text-xs">
+                                                    <option>m²</option>
+                                                    <option>m³</option>
+                                                    <option>un</option>
+                                                    <option>kg</option>
+                                                    <option>L</option>
+                                                    <option>m</option>
+                                                    <option>mm</option>
+                                                    <option>cm</option>
+                                                    <option>g</option>
+                                                    <option>ml</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-400 mb-1">Quantidade</label>
+                                                <input type="text" id="mat-qty" required placeholder="Ex: 10" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none font-medium">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-400 mb-1">Valor Unitário (R$)</label>
+                                                <input type="text" id="mat-price" required placeholder="Ex: 45,50" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none font-medium">
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-400 mb-1">Perda (%)</label>
+                                                <input type="text" id="mat-loss" placeholder="Ex: 5" value="0" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none font-medium">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-400 mb-1">Total Calculado</label>
+                                                <div id="mat-calc-total" class="w-full px-4 py-2 bg-brand-50 dark:bg-slate-800 text-brand-500 dark:text-brand-450 border border-transparent dark:border-slate-700 rounded-xl font-bold text-center text-sm">
+                                                    R$ 0,00
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+                                    <button onclick="UI.clearMaterialForm()" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                                        Limpar
+                                    </button>
+                                    <button id="mat-submit-btn" onclick="UI.submitMaterialForm()" class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold">
+                                        Adicionar Item
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Lista / Itens Adicionados -->
+                            <div class="xl:col-span-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xs flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h3 class="font-bold text-slate-800 dark:text-white text-sm flex items-center gap-2">
+                                            <i class="fa-solid fa-list-check text-brand-500"></i>
+                                            Itens adicionados
+                                        </h3>
+                                        <span class="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-500 px-3 py-1.5 rounded-full font-medium">
+                                            ${AppState.state.materials.length} itens no total
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-left text-xs border-collapse">
+                                            <thead>
+                                                <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-semibold">
+                                                    <th class="py-3 px-2">Material</th>
+                                                    <th class="py-3 px-2">Unidade</th>
+                                                    <th class="py-3 px-2 text-right">Qtd</th>
+                                                    <th class="py-3 px-2 text-right">Perda</th>
+                                                    <th class="py-3 px-2 text-right">Valor Unit.</th>
+                                                    <th class="py-3 px-2 text-right">Total (R$)</th>
+                                                    <th class="py-3 px-2 text-center">Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300 font-medium">
+                                                ${AppState.state.materials.map(m => `
+                                                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                                                        <td class="py-3 px-2">
+                                                            <div class="flex items-center gap-2">
+                                                                <span class="w-2 h-2 rounded-full ${m.category === 'Acabamento' ? 'bg-blue-500' : m.category === 'Materiais Básicos' ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
+                                                                <span class="font-semibold text-slate-800 dark:text-white">${m.name}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="py-3 px-2 text-slate-400">${m.unit}</td>
+                                                        <td class="py-3 px-2 text-right font-semibold">${Validators.formatNumber(m.quantity)}</td>
+                                                        <td class="py-3 px-2 text-right text-amber-500">${m.loss}%</td>
+                                                        <td class="py-3 px-2 text-right">${Validators.formatNumber(m.unitPrice)}</td>
+                                                        <td class="py-3 px-2 text-right font-bold text-slate-800 dark:text-white">${Validators.formatNumber(m.total)}</td>
+                                                        <td class="py-3 px-2 text-center">
+                                                            <div class="flex items-center justify-center gap-1">
+                                                                <button onclick="UI.editMaterial('${m.id}')" class="p-1.5 hover:bg-brand-50 dark:hover:bg-slate-800 rounded-lg text-brand-500" title="Editar">
+                                                                    <i class="fa-solid fa-pen text-xs"></i>
+                                                                </button>
+                                                                <button onclick="UI.deleteMaterial('${m.id}')" class="p-1.5 hover:bg-rose-50 dark:hover:bg-slate-800 rounded-lg text-rose-500" title="Excluir">
+                                                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 mt-6 pt-4">
+                                    <span class="text-xs font-semibold text-slate-400">Total Geral</span>
+                                    <span class="text-base font-bold text-slate-800 dark:text-white">
+                                        ${Validators.formatCurrency(AppState.state.materials.reduce((acc, curr) => acc + curr.total, 0))}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. GRAFICOS E PARCEIROS NO FOOTER DO DASHBOARD -->
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                            <div class="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xs">
+                                <h3 class="font-bold text-slate-800 dark:text-white mb-4 text-xs flex items-center gap-2">
+                                    <i class="fa-solid fa-chart-pie text-brand-500"></i>
+                                    Categorias
+                                </h3>
+                                <div class="relative h-44 w-full flex items-center justify-center">
+                                    <canvas id="categoryDonutChart"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xs flex flex-col justify-between">
+                                <div>
+                                    <h3 class="font-bold text-slate-800 dark:text-white mb-4 text-xs flex items-center gap-2">
+                                        <i class="fa-solid fa-scale-balanced text-brand-500"></i>
+                                        Conversões rápidas
+                                    </h3>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <button onclick="UI.quickConvert('10 mm = 1 cm')" class="p-2.5 bg-slate-50 dark:bg-slate-850 hover:bg-brand-50 dark:hover:bg-slate-800 text-[11px] text-slate-600 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-700 rounded-xl text-left transition-all">
+                                            10 mm = 1 cm
+                                        </button>
+                                        <button onclick="UI.quickConvert('100 cm = 1 m')" class="p-2.5 bg-slate-50 dark:bg-slate-850 hover:bg-brand-50 dark:hover:bg-slate-800 text-[11px] text-slate-600 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-700 rounded-xl text-left transition-all">
+                                            100 cm = 1 m
+                                        </button>
+                                        <button onclick="UI.quickConvert('1.000 mm = 1 m')" class="p-2.5 bg-slate-50 dark:bg-slate-850 hover:bg-brand-50 dark:hover:bg-slate-800 text-[11px] text-slate-600 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-700 rounded-xl text-left transition-all">
+                                            1.000 mm = 1 m
+                                        </button>
+                                        <button onclick="UI.quickConvert('1.000 L = 1 m³')" class="p-2.5 bg-slate-50 dark:bg-slate-850 hover:bg-brand-50 dark:hover:bg-slate-800 text-[11px] text-slate-600 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-700 rounded-xl text-left transition-all">
+                                            1.000 L = 1 m³
+                                        </button>
+                                    </div>
+                                </div>
+                                <button onclick="UI.openCalculatorModal()" class="w-full mt-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all">
+                                    <i class="fa-solid fa-calculator"></i>
+                                    Abrir Calculadora Completa
+                                </button>
+                            </div>
+
+                            <div class="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xs">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="font-bold text-slate-800 dark:text-white text-xs flex items-center gap-2">
+                                        <i class="fa-solid fa-cart-arrow-down text-brand-500"></i>
+                                        Compras Pendentes
+                                    </h3>
+                                    <button onclick="Router.navigate('purchases')" class="text-[10px] text-brand-500 hover:underline font-semibold">Ver tudo</button>
+                                </div>
+                                <div class="space-y-2.5">
+                                    ${AppState.state.purchases.filter(p => p.status === 'Pendente').slice(0, 3).map(p => `
+                                        <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl">
+                                            <div class="flex items-center gap-2.5">
+                                                <div class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/30 text-amber-500 flex items-center justify-center text-xs">
+                                                    <i class="fa-solid fa-shopping-bag"></i>
+                                                </div>
+                                                <div>
+                                                    <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300">${p.name}</h4>
+                                                    <span class="text-[10px] text-slate-400 block">${p.quantity}</span>
+                                                </div>
+                                            </div>
+                                            <span class="text-xs font-bold text-slate-600 dark:text-slate-400">${Validators.formatCurrency(p.price)}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    UI.bindCalculationEvents();
+                    Charts.renderCategoryDistribution('categoryDonutChart', categorySum);
+                },
+
+                materials(c) {
+                    c.innerHTML = `
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-6">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <h3 class="font-bold text-base text-slate-800 dark:text-white">Inventário de Materiais</h3>
+                                <div class="flex items-center gap-2">
+                                    <div class="relative">
+                                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                        <input type="text" id="mat-search" oninput="UI.filterMaterialsTable()" placeholder="Pesquisar material..." class="w-64 pl-8 pr-4 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                                    </div>
+                                    <button onclick="UI.openAddMaterialModal()" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-xs rounded-xl flex items-center gap-1.5">
+                                        <i class="fa-solid fa-plus"></i> Novo Material
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table id="materials-table" class="w-full text-left text-xs border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-semibold">
+                                            <th class="py-3 px-3">Nome</th>
+                                            <th class="py-3 px-3">Categoria</th>
+                                            <th class="py-3 px-3">Unidade</th>
+                                            <th class="py-3 px-3 text-right">Quantidade</th>
+                                            <th class="py-3 px-3 text-right">Perda (%)</th>
+                                            <th class="py-3 px-3 text-right">Valor Unitário</th>
+                                            <th class="py-3 px-3 text-right">Subtotal</th>
+                                            <th class="py-3 px-3 text-center">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300 font-medium">
+                                        ${AppState.state.materials.map(m => `
+                                            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-850/30 transition-colors">
+                                                <td class="py-3 px-3 font-semibold text-slate-800 dark:text-white">${m.name}</td>
+                                                <td class="py-3 px-3">
+                                                    <span class="px-2.5 py-1 text-[10px] font-bold rounded-lg ${
+                                                        m.category === 'Acabamento' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-500' :
+                                                        m.category === 'Materiais Básicos' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-500' :
+                                                        m.category === 'Hidráulica' ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-500' :
+                                                        'bg-slate-50 dark:bg-slate-800 text-slate-500'
+                                                    }">${m.category}</span>
+                                                </td>
+                                                <td class="py-3 px-3 text-slate-400">${m.unit}</td>
+                                                <td class="py-3 px-3 text-right font-semibold">${Validators.formatNumber(m.quantity)}</td>
+                                                <td class="py-3 px-3 text-right text-amber-500">${m.loss}%</td>
+                                                <td class="py-3 px-3 text-right">${Validators.formatCurrency(m.unitPrice)}</td>
+                                                <td class="py-3 px-3 text-right font-bold text-slate-850 dark:text-white">${Validators.formatCurrency(m.total)}</td>
+                                                <td class="py-3 px-3 text-center">
+                                                    <div class="flex items-center justify-center gap-1.5">
+                                                        <button onclick="UI.openEditMaterialModal('${m.id}')" class="p-1.5 hover:bg-brand-50 dark:hover:bg-slate-800 rounded-lg text-brand-500">
+                                                            <i class="fa-solid fa-pen text-xs"></i>
+                                                        </button>
+                                                        <button onclick="UI.deleteMaterial('${m.id}')" class="p-1.5 hover:bg-rose-50 dark:hover:bg-slate-800 rounded-lg text-rose-500">
+                                                            <i class="fa-solid fa-trash-can text-xs"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                },
+
+                purchases(c) {
+                    c.innerHTML = `
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-6">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <h3 class="font-bold text-base text-slate-800 dark:text-white">Planejamento de Compras</h3>
+                                <button onclick="UI.openAddPurchaseModal()" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-xs rounded-xl flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plus"></i> Nova Compra / Cotação
+                                </button>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-semibold">
+                                            <th class="py-3.5 px-3">Item</th>
+                                            <th class="py-3.5 px-3">Qtd / Dimensão</th>
+                                            <th class="py-3.5 px-3">Fornecedor</th>
+                                            <th class="py-3.5 px-3">Prioridade</th>
+                                            <th class="py-3.5 px-3 text-right">Orçamento Cotado</th>
+                                            <th class="py-3.5 px-3 text-center">Status</th>
+                                            <th class="py-3.5 px-3 text-center">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300 font-medium">
+                                        ${AppState.state.purchases.map(p => `
+                                            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-850/30 transition-colors">
+                                                <td class="py-3.5 px-3 font-semibold text-slate-800 dark:text-white">${p.name}</td>
+                                                <td class="py-3.5 px-3 text-slate-400">${p.quantity}</td>
+                                                <td class="py-3.5 px-3">${p.supplier}</td>
+                                                <td class="py-3.5 px-3">
+                                                    <span class="px-2 py-0.5 text-[9px] font-bold rounded-md ${
+                                                        p.priority === 'Alta' ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-500' : 'bg-amber-50 dark:bg-amber-950/40 text-amber-500'
+                                                    }">${p.priority}</span>
+                                                </td>
+                                                <td class="py-3.5 px-3 text-right font-bold">${Validators.formatCurrency(p.price)}</td>
+                                                <td class="py-3.5 px-3 text-center">
+                                                    <button onclick="UI.togglePurchaseStatus('${p.id}')" class="px-2.5 py-1 text-[10px] font-bold rounded-lg border ${
+                                                        p.status === 'Comprado' ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 text-emerald-500' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 text-slate-450'
+                                                    }">
+                                                        ${p.status}
+                                                    </button>
+                                                </td>
+                                                <td class="py-3.5 px-3 text-center">
+                                                    <div class="flex items-center justify-center gap-1.5">
+                                                        <button onclick="UI.openEditPurchaseModal('${p.id}')" class="p-1.5 hover:bg-brand-50 dark:hover:bg-slate-800 text-brand-500 rounded-lg" title="Editar">
+                                                            <i class="fa-solid fa-pen text-xs"></i>
+                                                        </button>
+                                                        <button onclick="UI.deletePurchase('${p.id}')" class="p-1.5 hover:bg-rose-50 dark:hover:bg-slate-800 text-rose-500 rounded-lg" title="Excluir">
+                                                            <i class="fa-solid fa-trash-can text-xs"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                },
+
+                expenses(c) {
+                    c.innerHTML = `
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-6">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <h3 class="font-bold text-base text-slate-800 dark:text-white">Despesas Acessórias</h3>
+                                <button onclick="UI.openAddExpenseModal()" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-xs rounded-xl flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plus"></i> Registrar Despesa
+                                </button>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-semibold">
+                                            <th class="py-3.5 px-3">Descrição</th>
+                                            <th class="py-3.5 px-3">Categoria</th>
+                                            <th class="py-3.5 px-3">Data</th>
+                                            <th class="py-3.5 px-3">Observações</th>
+                                            <th class="py-3.5 px-3 text-right">Valor</th>
+                                            <th class="py-3.5 px-3 text-center">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300 font-medium">
+                                        ${AppState.state.expenses.map(e => `
+                                            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-850/30 transition-colors">
+                                                <td class="py-3.5 px-3 font-semibold text-slate-800 dark:text-white">${e.description}</td>
+                                                <td class="py-3.5 px-3">
+                                                    <span class="px-2 py-0.5 text-[10px] font-bold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500">${e.category}</span>
+                                                </td>
+                                                <td class="py-3.5 px-3 text-slate-400">${e.date}</td>
+                                                <td class="py-3.5 px-3 text-xs italic text-slate-400">${e.notes || ''}</td>
+                                                <td class="py-3.5 px-3 text-right font-bold text-slate-800 dark:text-white">${Validators.formatCurrency(e.amount)}</td>
+                                                <td class="py-3.5 px-3 text-center">
+                                                    <div class="flex items-center justify-center gap-1.5">
+                                                        <button onclick="UI.openEditExpenseModal('${e.id}')" class="p-1.5 hover:bg-brand-50 dark:hover:bg-slate-800 text-brand-500 rounded-lg" title="Editar">
+                                                            <i class="fa-solid fa-pen text-xs"></i>
+                                                        </button>
+                                                        <button onclick="UI.deleteExpense('${e.id}')" class="p-1.5 hover:bg-rose-50 dark:hover:bg-slate-800 text-rose-500 rounded-lg" title="Excluir">
+                                                            <i class="fa-solid fa-trash-can text-xs"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                },
+
+                stages(c) {
+                    c.innerHTML = `
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-6">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <h3 class="font-bold text-base text-slate-800 dark:text-white">Etapas Construtivas</h3>
+                                <button onclick="UI.openAddStageModal()" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-xs rounded-xl flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plus"></i> Nova Etapa
+                                </button>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                ${AppState.state.stages.map(st => `
+                                    <div class="border border-slate-200 dark:border-slate-800 p-5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/55 shadow-xs flex flex-col justify-between">
+                                        <div>
+                                            <div class="flex justify-between items-start mb-3">
+                                                <h4 class="font-bold text-sm text-slate-800 dark:text-white leading-snug">${st.name}</h4>
+                                                <span class="px-2 py-0.5 text-[9px] font-bold rounded-lg ${
+                                                    st.status === 'Concluído' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-500' : 'bg-amber-50 dark:bg-amber-950/40 text-amber-500'
+                                                }">${st.status}</span>
+                                            </div>
+                                            <div class="space-y-1.5 text-xs text-slate-500 dark:text-slate-400 mb-4">
+                                                <p><span class="font-semibold text-slate-400">Responsável:</span> ${st.responsible}</p>
+                                                <p><span class="font-semibold text-slate-400">Cronograma:</span> ${st.startDate} até ${st.endDate}</p>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between items-center text-xs font-semibold mb-1">
+                                                <span class="text-slate-400">Progresso Executado</span>
+                                                <span class="text-brand-500">${st.progress}%</span>
+                                            </div>
+                                            <div class="w-full bg-slate-200 dark:bg-slate-850 rounded-full h-2 mb-4">
+                                                <div class="bg-brand-500 h-2 rounded-full transition-all duration-300" style="width: ${st.progress}%"></div>
+                                            </div>
+                                            <div class="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800">
+                                                <div class="flex items-center gap-2">
+                                                    <button onclick="UI.incrementStageProgress('${st.id}')" class="text-xs text-brand-500 hover:underline font-semibold" title="Avançar 10%">Avançar</button>
+                                                    <span class="text-slate-300">|</span>
+                                                    <button onclick="UI.openEditStageModal('${st.id}')" class="text-xs text-slate-500 hover:text-brand-500 font-semibold">Editar</button>
+                                                </div>
+                                                <button onclick="UI.deleteStage('${st.id}')" class="p-1 hover:bg-rose-50 dark:hover:bg-slate-800 text-rose-500 rounded-lg">
+                                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                },
+
+                suppliers(c) {
+                    c.innerHTML = `
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-6">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <h3 class="font-bold text-base text-slate-800 dark:text-white">Fornecedores Cadastrados</h3>
+                                <button onclick="UI.openAddSupplierModal()" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-xs rounded-xl flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plus"></i> Cadastrar Fornecedor
+                                </button>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                ${AppState.state.suppliers.map(sup => `
+                                    <div class="border border-slate-200 dark:border-slate-800 p-5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/55 shadow-xs flex flex-col justify-between">
+                                        <div>
+                                            <div class="flex items-center justify-between mb-2">
+                                                <h4 class="font-bold text-sm text-slate-800 dark:text-white">${sup.name}</h4>
+                                                <div class="text-amber-400 flex gap-0.5 text-xs">
+                                                    ${Array.from({ length: 5 }, (_, i) => `
+                                                        <i class="${i < sup.rating ? 'fa-solid' : 'fa-regular'} fa-star"></i>
+                                                    `).join('')}
+                                                </div>
+                                            </div>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2 font-medium">
+                                                <i class="fa-solid fa-phone text-slate-400 mr-1.5"></i> ${sup.phone}
+                                            </p>
+                                            <p class="text-xs text-slate-400 italic font-medium bg-white dark:bg-slate-850 p-3 rounded-xl border border-slate-100 dark:border-slate-800 mb-4">${sup.notes}</p>
+                                        </div>
+                                        <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
+                                            <div class="flex gap-2">
+                                                <a href="https://wa.me/${sup.phone.replace(/\D/g, '')}" target="_blank" class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-[11px] flex items-center gap-1 transition-all">
+                                                    <i class="fa-brands fa-whatsapp text-xs"></i> Mensagem
+                                                </a>
+                                                <button onclick="UI.openEditSupplierModal('${sup.id}')" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-[11px] transition-all">
+                                                    Editar
+                                                </button>
+                                            </div>
+                                            <button onclick="UI.deleteSupplier('${sup.id}')" class="p-1.5 hover:bg-rose-50 dark:hover:bg-slate-800 text-rose-500 rounded-lg">
+                                                <i class="fa-solid fa-trash-can text-xs"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                },
+
+                reports(c) {
+                    c.innerHTML = `
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xs">
+                                <h3 class="font-bold text-slate-800 dark:text-white mb-4 text-sm">Previsto vs Realizado por Categorias</h3>
+                                <div class="relative h-72 w-full">
+                                    <canvas id="barComparisonChart"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xs">
+                                <h3 class="font-bold text-slate-800 dark:text-white mb-4 text-sm">Resumo da Alocação de Recursos</h3>
+                                <div class="relative h-72 w-full flex items-center justify-center">
+                                    <canvas id="donutDistributionChart"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="xl:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
+                                <div>
+                                    <h4 class="font-bold text-slate-850 dark:text-white text-sm">Exportação de Relatórios</h4>
+                                    <p class="text-xs text-slate-400">Gere uma cópia local estruturada de todo o histórico da obra.</p>
+                                </div>
+                                <button onclick="UI.exportData()" class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-xs rounded-xl flex items-center gap-2 shadow-md shadow-brand-500/10">
+                                    <i class="fa-solid fa-cloud-arrow-down"></i> Exportar JSON
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    const categories = ['Acabamento', 'Materiais Básicos', 'Hidráulica', 'Elétrica', 'Estrutura', 'Outros'];
+                    const expectedMap = {
+                        'Acabamento': 10000,
+                        'Materiais Básicos': 8000,
+                        'Hidráulica': 3000,
+                        'Elétrica': 2000,
+                        'Estrutura': 2000,
+                        'Outros': 0
+                    };
+                    
+                    const actualMap = {};
+                    categories.forEach(cat => actualMap[cat] = 0);
+                    
+                    AppState.state.materials.forEach(m => {
+                        actualMap[m.category] = (actualMap[m.category] || 0) + m.total;
+                    });
+                    AppState.state.expenses.forEach(e => {
+                        actualMap[e.category] = (actualMap[e.category] || 0) + e.amount;
+                    });
+
+                    Charts.renderBarComparison('barComparisonChart', categories, categories.map(c => expectedMap[c]), categories.map(c => actualMap[c]));
+                    Charts.renderCategoryDistribution('donutDistributionChart', actualMap);
+                },
+
+                settings(c) {
+                    c.innerHTML = `
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-6 max-w-3xl">
+                            <div>
+                                <h3 class="font-bold text-base text-slate-800 dark:text-white">Opções Gerais do Sistema</h3>
+                                <p class="text-xs text-slate-400">Gerenciamento de backup e definições globais da aplicação.</p>
+                            </div>
+
+                            <div class="border-t border-slate-100 dark:border-slate-800 pt-5 space-y-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-400 mb-1.5">Orçamento Máximo Previsto (R$)</label>
+                                    <input type="text" id="settings-budget" value="${AppState.state.settings.totalBudget}" class="w-full max-w-xs px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 font-medium">
+                                </div>
+
+                                <div class="pt-4 flex flex-col sm:flex-row gap-3">
+                                    <button onclick="UI.saveSettings()" class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-xs rounded-xl transition-all">Salvar Configurações</button>
+                                    <button onclick="UI.showImportModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold text-xs rounded-xl transition-all">Importar Backup (.json)</button>
+                                    <button onclick="UI.confirmResetSystem()" class="px-5 py-2.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/20 text-rose-500 border border-rose-100 dark:border-rose-900/30 font-semibold text-xs rounded-xl transition-all">Resetar Banco de Dados</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            },
+
+            // CÁLCULOS DINÂMICOS
+            bindCalculationEvents() {
+                const qtyInput = document.getElementById('mat-qty');
+                const priceInput = document.getElementById('mat-price');
+                const lossInput = document.getElementById('mat-loss');
+                const calcBox = document.getElementById('mat-calc-total');
+
+                const updateSum = () => {
+                    const q = Validators.parseFloat(qtyInput.value);
+                    const p = Validators.parseFloat(priceInput.value);
+                    const l = Validators.parseFloat(lossInput?.value || 0);
+                    
+                    const total = q * p * (1 + (l / 100));
+                    calcBox.textContent = Validators.formatCurrency(total);
+                };
+
+                if (qtyInput && priceInput) {
+                    qtyInput.addEventListener('input', updateSum);
+                    priceInput.addEventListener('input', updateSum);
+                    if (lossInput) lossInput.addEventListener('input', updateSum);
+                }
+            },
+
+            // CRUD: MATERIAIS
+            openAddMaterialModal() {
+                this.editingMaterialId = null;
+                const modalBody = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Nome do Material</label>
+                            <input type="text" id="m-name" placeholder="Ex: Cimento Portland CP-II" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Categoria</label>
+                                <select id="m-category" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                                    <option>Acabamento</option>
+                                    <option>Materiais Básicos</option>
+                                    <option>Hidráulica</option>
+                                    <option>Elétrica</option>
+                                    <option>Estrutura</option>
+                                    <option>Outros</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Unidade</label>
+                                <select id="m-unit" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                                    <option>m²</option><option>m³</option><option>un</option><option>kg</option>
+                                    <option>L</option><option>m</option><option>mm</option><option>cm</option>
+                                    <option>g</option><option>ml</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Qtd</label>
+                                <input type="text" id="m-qty" placeholder="Ex: 10" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Valor Unitário</label>
+                                <input type="text" id="m-price" placeholder="Ex: 29.90" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Perda (%)</label>
+                                <input type="text" id="m-loss" placeholder="Ex: 5" value="0" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const modalFooter = `
+                    <button onclick="Modal.close()" class="px-4 py-2 text-sm font-semibold text-slate-500">Cancelar</button>
+                    <button onclick="UI.saveMaterial(null)" class="px-5 py-2 text-sm font-bold bg-brand-500 text-white rounded-xl">Criar Item</button>
+                `;
+
+                Modal.open("Cadastrar Novo Material", modalBody, modalFooter);
+            },
+
+            openEditMaterialModal(id) {
+                const m = AppState.state.materials.find(x => x.id === id);
+                if (!m) return;
+
+                const modalBody = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Nome do Material</label>
+                            <input type="text" id="m-name" value="${m.name}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Categoria</label>
+                                <select id="m-category" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                                    <option ${m.category === 'Acabamento' ? 'selected' : ''}>Acabamento</option>
+                                    <option ${m.category === 'Materiais Básicos' ? 'selected' : ''}>Materiais Básicos</option>
+                                    <option ${m.category === 'Hidráulica' ? 'selected' : ''}>Hidráulica</option>
+                                    <option ${m.category === 'Elétrica' ? 'selected' : ''}>Elétrica</option>
+                                    <option ${m.category === 'Estrutura' ? 'selected' : ''}>Estrutura</option>
+                                    <option ${m.category === 'Outros' ? 'selected' : ''}>Outros</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Unidade</label>
+                                <select id="m-unit" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                                    <option ${m.unit === 'm²' ? 'selected' : ''}>m²</option>
+                                    <option ${m.unit === 'm³' ? 'selected' : ''}>m³</option>
+                                    <option ${m.unit === 'un' ? 'selected' : ''}>un</option>
+                                    <option ${m.unit === 'kg' ? 'selected' : ''}>kg</option>
+                                    <option ${m.unit === 'L' ? 'selected' : ''}>L</option>
+                                    <option ${m.unit === 'm' ? 'selected' : ''}>m</option>
+                                    <option ${m.unit === 'mm' ? 'selected' : ''}>mm</option>
+                                    <option ${m.unit === 'cm' ? 'selected' : ''}>cm</option>
+                                    <option ${m.unit === 'g' ? 'selected' : ''}>g</option>
+                                    <option ${m.unit === 'ml' ? 'selected' : ''}>ml</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Qtd</label>
+                                <input type="text" id="m-qty" value="${m.quantity}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Valor Unitário</label>
+                                <input type="text" id="m-price" value="${m.unitPrice}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Perda (%)</label>
+                                <input type="text" id="m-loss" value="${m.loss}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const modalFooter = `
+                    <button onclick="Modal.close()" class="px-4 py-2 text-sm font-semibold text-slate-500">Cancelar</button>
+                    <button onclick="UI.saveMaterial('${m.id}')" class="px-5 py-2 text-sm font-bold bg-brand-500 text-white rounded-xl">Salvar Alterações</button>
+                `;
+
+                Modal.open("Editar Material", modalBody, modalFooter);
+            },
+
+            saveMaterial(id) {
+                const name = document.getElementById('m-name').value;
+                const cat = document.getElementById('m-category').value;
+                const unit = document.getElementById('m-unit').value;
+                const qty = Validators.parseFloat(document.getElementById('m-qty').value);
+                const price = Validators.parseFloat(document.getElementById('m-price').value);
+                const loss = Validators.parseFloat(document.getElementById('m-loss').value || 0);
+
+                if (!name || qty <= 0 || price <= 0) {
+                    Toast.show("Por favor, preencha as informações básicas do material.", "error");
+                    return;
+                }
+
+                const total = qty * price * (1 + (loss / 100));
+
+                if (id) {
+                    const idx = AppState.state.materials.findIndex(x => x.id === id);
+                    if (idx !== -1) {
+                        AppState.state.materials[idx] = { id, name, category: cat, unit, quantity: qty, loss, unitPrice: price, total };
+                        Toast.show("Material atualizado!");
+                    }
+                } else {
+                    AppState.state.materials.push({
+                        id: Date.now().toString(),
+                        name, category: cat, unit, quantity: qty, loss, unitPrice: price, total
+                    });
+                    Toast.show("Material adicionado!");
+                }
+
+                AppState.notify();
+                Modal.close();
+                this.renderCurrentPage();
+            },
+
+            submitMaterialForm() {
+                const name = document.getElementById('mat-name').value;
+                const cat = document.getElementById('mat-category').value;
+                const unit = document.getElementById('mat-unit').value;
+                const qty = Validators.parseFloat(document.getElementById('mat-qty').value);
+                const price = Validators.parseFloat(document.getElementById('mat-price').value);
+                const loss = Validators.parseFloat(document.getElementById('mat-loss').value || 0);
+
+                if (!name || qty <= 0 || price <= 0) {
+                    Toast.show("Preencha todos os campos corretamente com valores maiores que zero.", "error");
+                    return;
+                }
+
+                const total = qty * price * (1 + (loss / 100));
+
+                if (this.editingMaterialId) {
+                    const matIndex = AppState.state.materials.findIndex(m => m.id === this.editingMaterialId);
+                    if (matIndex !== -1) {
+                        AppState.state.materials[matIndex] = {
+                            id: this.editingMaterialId,
+                            name, category: cat, unit, quantity: qty, loss, unitPrice: price, total
+                        };
+                        Toast.show("Material atualizado!");
+                    }
+                    this.editingMaterialId = null;
+                    document.getElementById('mat-submit-btn').textContent = "Adicionar Item";
+                } else {
+                    AppState.state.materials.push({
+                        id: Date.now().toString(),
+                        name, category: cat, unit, quantity: qty, loss, unitPrice: price, total
+                    });
+                    Toast.show("Material adicionado!");
+                }
+
+                AppState.notify();
+                this.clearMaterialForm();
+                this.renderCurrentPage();
+            },
+
+            editMaterial(id) {
+                const mat = AppState.state.materials.find(m => m.id === id);
+                if (!mat) return;
+
+                document.getElementById('mat-name').value = mat.name;
+                document.getElementById('mat-category').value = mat.category;
+                document.getElementById('mat-unit').value = mat.unit;
+                document.getElementById('mat-qty').value = mat.quantity;
+                document.getElementById('mat-price').value = mat.unitPrice;
+                document.getElementById('mat-loss').value = mat.loss;
+                document.getElementById('mat-calc-total').textContent = Validators.formatCurrency(mat.total);
+                
+                this.editingMaterialId = mat.id;
+                document.getElementById('mat-submit-btn').textContent = "Salvar Edição";
+                Toast.show("Dados carregados no formulário de edição!");
+            },
+
+            clearMaterialForm() {
+                this.editingMaterialId = null;
+                const form = document.getElementById('material-add-form');
+                if (form) form.reset();
+                
+                const calcBox = document.getElementById('mat-calc-total');
+                if (calcBox) calcBox.textContent = "R$ 0,00";
+                
+                const sbtn = document.getElementById('mat-submit-btn');
+                if (sbtn) sbtn.textContent = "Adicionar Item";
+            },
+
+            deleteMaterial(id) {
+                AppState.state.materials = AppState.state.materials.filter(m => m.id !== id);
+                AppState.notify();
+                this.renderCurrentPage();
+                Toast.show("Material deletado.", "error");
+            },
+
+            filterMaterialsTable() {
+                const query = document.getElementById('mat-search').value.toLowerCase();
+                const rows = document.querySelectorAll('#materials-table tbody tr');
+                
+                rows.forEach(row => {
+                    const name = row.cells[0].textContent.toLowerCase();
+                    if (name.includes(query)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            },
+
+            // CRUD: COMPRAS
+            openAddPurchaseModal() {
+                const modalBody = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Item Planejado</label>
+                            <input type="text" id="p-name" placeholder="Ex: Cimento, Torneira Banheiro" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Quantidade / Dimensão</label>
+                                <input type="text" id="p-qty" placeholder="Ex: 10 m², 15 sacos" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Fornecedor</label>
+                                <select id="p-supplier" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                                    ${AppState.state.suppliers.map(s => `<option>${s.name}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Prioridade</label>
+                                <select id="p-priority" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                                    <option>Alta</option>
+                                    <option>Média</option>
+                                    <option>Baixa</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Valor Estimado (R$)</label>
+                                <input type="text" id="p-price" placeholder="Ex: 150,00" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const modalFooter = `
+                    <button onclick="Modal.close()" class="px-4 py-2 text-sm font-semibold text-slate-500">Cancelar</button>
+                    <button onclick="UI.savePurchase(null)" class="px-5 py-2 text-sm font-bold bg-brand-500 text-white rounded-xl">Criar Compra</button>
+                `;
+
+                Modal.open("Registrar Nova Compra / Cotação", modalBody, modalFooter);
+            },
+
+            openEditPurchaseModal(id) {
+                const p = AppState.state.purchases.find(x => x.id === id);
+                if (!p) return;
+
+                const modalBody = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Item Planejado</label>
+                            <input type="text" id="p-name" value="${p.name}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Quantidade / Dimensão</label>
+                                <input type="text" id="p-qty" value="${p.quantity}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Fornecedor</label>
+                                <select id="p-supplier" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                                    ${AppState.state.suppliers.map(s => `<option ${s.name === p.supplier ? 'selected' : ''}>${s.name}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Prioridade</label>
+                                <select id="p-priority" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                                    <option ${p.priority === 'Alta' ? 'selected' : ''}>Alta</option>
+                                    <option ${p.priority === 'Média' ? 'selected' : ''}>Média</option>
+                                    <option ${p.priority === 'Baixa' ? 'selected' : ''}>Baixa</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Preço Estimado (R$)</label>
+                                <input type="text" id="p-price" value="${p.price}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const modalFooter = `
+                    <button onclick="Modal.close()" class="px-4 py-2 text-sm font-semibold text-slate-500">Cancelar</button>
+                    <button onclick="UI.savePurchase('${p.id}')" class="px-5 py-2 text-sm font-bold bg-brand-500 text-white rounded-xl">Salvar Alterações</button>
+                `;
+
+                Modal.open("Editar Planejamento de Compra", modalBody, modalFooter);
+            },
+
+            savePurchase(id) {
+                const name = document.getElementById('p-name').value;
+                const qty = document.getElementById('p-qty').value;
+                const sup = document.getElementById('p-supplier').value;
+                const priority = document.getElementById('p-priority').value;
+                const price = Validators.parseFloat(document.getElementById('p-price').value);
+
+                if (!name || !qty || price <= 0) {
+                    Toast.show("Insira as informações de cotação.", "error");
+                    return;
+                }
+
+                if (id) {
+                    const idx = AppState.state.purchases.findIndex(x => x.id === id);
+                    if (idx !== -1) {
+                        AppState.state.purchases[idx] = { ...AppState.state.purchases[idx], name, quantity: qty, supplier: sup, priority, price };
+                        Toast.show("Planejamento de compra atualizado!");
+                    }
+                } else {
+                    AppState.state.purchases.push({
+                        id: Date.now().toString(),
+                        name, quantity: qty, supplier: sup, priority, status: 'Pendente', price
+                    });
+                    Toast.show("Compra adicionada ao cronograma!");
+                }
+
+                AppState.notify();
+                Modal.close();
+                this.renderCurrentPage();
+            },
+
+            togglePurchaseStatus(id) {
+                const p = AppState.state.purchases.find(item => item.id === id);
+                if (p) {
+                    p.status = p.status === 'Comprado' ? 'Pendente' : 'Comprado';
+                    AppState.notify();
+                    this.renderCurrentPage();
+                    Toast.show("Status da compra atualizado!");
+                }
+            },
+
+            deletePurchase(id) {
+                AppState.state.purchases = AppState.state.purchases.filter(p => p.id !== id);
+                AppState.notify();
+                this.renderCurrentPage();
+                Toast.show("Item removido.", "error");
+            },
+
+            // CRUD: DESPESAS
+            openAddExpenseModal() {
+                const modalBody = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Descrição</label>
+                            <input type="text" id="exp-desc" placeholder="Ex: Diária de Pedreiro" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Categoria</label>
+                                <select id="exp-cat" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                                    <option>Mão de Obra</option>
+                                    <option>Ferramentas</option>
+                                    <option>Frete</option>
+                                    <option>Extras</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Valor Pago (R$)</label>
+                                <input type="text" id="exp-amount" placeholder="Ex: 120,00" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Observações</label>
+                            <textarea id="exp-notes" placeholder="Detalhes adicionais do pagamento..." class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none text-xs" rows="3"></textarea>
+                        </div>
+                    </div>
+                `;
+
+                const modalFooter = `
+                    <button onclick="Modal.close()" class="px-4 py-2 text-sm font-semibold text-slate-500">Cancelar</button>
+                    <button onclick="UI.saveExpense(null)" class="px-5 py-2 text-sm font-bold bg-brand-500 text-white rounded-xl">Registrar</button>
+                `;
+
+                Modal.open("Registrar Nova Despesa", modalBody, modalFooter);
+            },
+
+            openEditExpenseModal(id) {
+                const e = AppState.state.expenses.find(x => x.id === id);
+                if (!e) return;
+
+                const modalBody = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Descrição</label>
+                            <input type="text" id="exp-desc" value="${e.description}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Categoria</label>
+                                <select id="exp-cat" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                                    <option ${e.category === 'Mão de Obra' ? 'selected' : ''}>Mão de Obra</option>
+                                    <option ${e.category === 'Ferramentas' ? 'selected' : ''}>Ferramentas</option>
+                                    <option ${e.category === 'Frete' ? 'selected' : ''}>Frete</option>
+                                    <option ${e.category === 'Extras' ? 'selected' : ''}>Extras</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Valor Pago (R$)</label>
+                                <input type="text" id="exp-amount" value="${e.amount}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Observações</label>
+                            <textarea id="exp-notes" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none text-xs" rows="3">${e.notes || ''}</textarea>
+                        </div>
+                    </div>
+                `;
+
+                const modalFooter = `
+                    <button onclick="Modal.close()" class="px-4 py-2 text-sm font-semibold text-slate-500">Cancelar</button>
+                    <button onclick="UI.saveExpense('${e.id}')" class="px-5 py-2 text-sm font-bold bg-brand-500 text-white rounded-xl">Salvar Alterações</button>
+                `;
+
+                Modal.open("Editar Registro de Despesa", modalBody, modalFooter);
+            },
+
+            saveExpense(id) {
+                const desc = document.getElementById('exp-desc').value;
+                const cat = document.getElementById('exp-cat').value;
+                const amount = Validators.parseFloat(document.getElementById('exp-amount').value);
+                const notes = document.getElementById('exp-notes').value;
+
+                if (!desc || amount <= 0) {
+                    Toast.show("Insira as informações básicas do pagamento.", "error");
+                    return;
+                }
+
+                if (id) {
+                    const idx = AppState.state.expenses.findIndex(x => x.id === id);
+                    if (idx !== -1) {
+                        AppState.state.expenses[idx] = { ...AppState.state.expenses[idx], description: desc, category: cat, notes, amount };
+                        Toast.show("Despesa alterada!");
+                    }
+                } else {
+                    AppState.state.expenses.push({
+                        id: Date.now().toString(),
+                        description: desc,
+                        category: cat,
+                        date: new Date().toISOString().split('T')[0],
+                        notes,
+                        amount
+                    });
+                    Toast.show("Despesa registrada!");
+                }
+
+                AppState.notify();
+                Modal.close();
+                this.renderCurrentPage();
+            },
+
+            deleteExpense(id) {
+                AppState.state.expenses = AppState.state.expenses.filter(e => e.id !== id);
+                AppState.notify();
+                this.renderCurrentPage();
+                Toast.show("Despesa removida.", "error");
+            },
+
+            // CRUD: ETAPAS
+            openAddStageModal() {
+                const modalBody = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Nome da Etapa</label>
+                            <input type="text" id="st-name" placeholder="Ex: Fundações e Pilares" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Responsável</label>
+                            <input type="text" id="st-resp" placeholder="Ex: Mestre Gilberto" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Início</label>
+                                <input type="date" id="st-start" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Conclusão</label>
+                                <input type="date" id="st-end" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const modalFooter = `
+                    <button onclick="Modal.close()" class="px-4 py-2 text-sm font-semibold text-slate-500">Cancelar</button>
+                    <button onclick="UI.saveStage(null)" class="px-5 py-2 text-sm font-bold bg-brand-500 text-white rounded-xl">Iniciar Etapa</button>
+                `;
+
+                Modal.open("Registrar Nova Etapa", modalBody, modalFooter);
+            },
+
+            openEditStageModal(id) {
+                const st = AppState.state.stages.find(x => x.id === id);
+                if (!st) return;
+
+                const modalBody = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Nome da Etapa</label>
+                            <input type="text" id="st-name" value="${st.name}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Responsável</label>
+                            <input type="text" id="st-resp" value="${st.responsible}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Início</label>
+                                <input type="date" id="st-start" value="${st.startDate}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Conclusão</label>
+                                <input type="date" id="st-end" value="${st.endDate}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Progresso (%)</label>
+                                <input type="number" id="st-progress" min="0" max="100" value="${st.progress}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Status</label>
+                                <select id="st-status" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                                    <option ${st.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
+                                    <option ${st.status === 'Concluído' ? 'selected' : ''}>Concluído</option>
+                                    <option ${st.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const modalFooter = `
+                    <button onclick="Modal.close()" class="px-4 py-2 text-sm font-semibold text-slate-500">Cancelar</button>
+                    <button onclick="UI.saveStage('${st.id}')" class="px-5 py-2 text-sm font-bold bg-brand-500 text-white rounded-xl">Salvar Alterações</button>
+                `;
+
+                Modal.open("Editar Etapa Construtiva", modalBody, modalFooter);
+            },
+
+            saveStage(id) {
+                const name = document.getElementById('st-name').value;
+                const resp = document.getElementById('st-resp').value;
+                const start = document.getElementById('st-start').value;
+                const end = document.getElementById('st-end').value;
+
+                if (!name || !resp) {
+                    Toast.show("Insira o nome do escopo e um responsável.", "error");
+                    return;
+                }
+
+                if (id) {
+                    const idx = AppState.state.stages.findIndex(x => x.id === id);
+                    if (idx !== -1) {
+                        const progress = Math.min(Math.max(parseInt(document.getElementById('st-progress').value || 0), 0), 100);
+                        const status = document.getElementById('st-status').value;
+                        AppState.state.stages[idx] = { id, name, responsible: resp, startDate: start, endDate: end, progress, status };
+                        Toast.show("Etapa atualizada!");
+                    }
+                } else {
+                    AppState.state.stages.push({
+                        id: Date.now().toString(),
+                        name, responsible: resp, startDate: start, endDate: end, progress: 0, status: 'Em andamento'
+                    });
+                    Toast.show("Nova etapa cadastrada!");
+                }
+
+                AppState.notify();
+                Modal.close();
+                this.renderCurrentPage();
+            },
+
+            incrementStageProgress(id) {
+                const st = AppState.state.stages.find(item => item.id === id);
+                if (st) {
+                    st.progress = Math.min(st.progress + 10, 100);
+                    if (st.progress === 100) st.status = 'Concluído';
+                    AppState.notify();
+                    this.renderCurrentPage();
+                    Toast.show("Progresso de etapa avançado!");
+                }
+            },
+
+            deleteStage(id) {
+                AppState.state.stages = AppState.state.stages.filter(st => st.id !== id);
+                AppState.notify();
+                this.renderCurrentPage();
+                Toast.show("Etapa removida.", "error");
+            },
+
+            // CRUD: FORNECEDORES
+            openAddSupplierModal() {
+                const modalBody = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Nome do Fornecedor / Empresa</label>
+                            <input type="text" id="sup-name" placeholder="Ex: Depósito Aliança" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Telefone / WhatsApp</label>
+                                <input type="text" id="sup-phone" placeholder="Ex: (11) 98888-7777" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Classificação (Estrelas)</label>
+                                <select id="sup-rating" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                                    <option value="5">⭐⭐⭐⭐⭐ (Excelente)</option>
+                                    <option value="4">⭐⭐⭐⭐ (Muito bom)</option>
+                                    <option value="3">⭐⭐⭐ (Regular)</option>
+                                    <option value="2">⭐⭐ (Ruim)</option>
+                                    <option value="1">⭐ (Inviável)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Notas de Relacionamento</label>
+                            <textarea id="sup-notes" placeholder="Descontos obtidos, forma de pagamento, prazos de entrega..." class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none text-xs" rows="3"></textarea>
+                        </div>
+                    </div>
+                `;
+
+                const modalFooter = `
+                    <button onclick="Modal.close()" class="px-4 py-2 text-sm font-semibold text-slate-500">Cancelar</button>
+                    <button onclick="UI.saveSupplier(null)" class="px-5 py-2 text-sm font-bold bg-brand-500 text-white rounded-xl">Homologar</button>
+                `;
+
+                Modal.open("Registrar Novo Fornecedor", modalBody, modalFooter);
+            },
+
+            openEditSupplierModal(id) {
+                const s = AppState.state.suppliers.find(x => x.id === id);
+                if (!s) return;
+
+                const modalBody = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Nome do Fornecedor / Empresa</label>
+                            <input type="text" id="sup-name" value="${s.name}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Telefone / WhatsApp</label>
+                                <input type="text" id="sup-phone" value="${s.phone}" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-400">Classificação (Estrelas)</label>
+                                <select id="sup-rating" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none">
+                                    <option value="5" ${s.rating === 5 ? 'selected' : ''}>⭐⭐⭐⭐⭐ (Excelente)</option>
+                                    <option value="4" ${s.rating === 4 ? 'selected' : ''}>⭐⭐⭐⭐ (Muito bom)</option>
+                                    <option value="3" ${s.rating === 3 ? 'selected' : ''}>⭐⭐⭐ (Regular)</option>
+                                    <option value="2" ${s.rating === 2 ? 'selected' : ''}>⭐⭐ (Ruim)</option>
+                                    <option value="1" ${s.rating === 1 ? 'selected' : ''}>⭐ (Inviável)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-400">Notas de Relacionamento</label>
+                            <textarea id="sup-notes" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none text-xs" rows="3">${s.notes || ''}</textarea>
+                        </div>
+                    </div>
+                `;
+
+                const modalFooter = `
+                    <button onclick="Modal.close()" class="px-4 py-2 text-sm font-semibold text-slate-500">Cancelar</button>
+                    <button onclick="UI.saveSupplier('${s.id}')" class="px-5 py-2 text-sm font-bold bg-brand-500 text-white rounded-xl">Salvar Alterações</button>
+                `;
+
+                Modal.open("Editar Fornecedor", modalBody, modalFooter);
+            },
+
+            saveSupplier(id) {
+                const name = document.getElementById('sup-name').value;
+                const phone = document.getElementById('sup-phone').value;
+                const rating = parseInt(document.getElementById('sup-rating').value);
+                const notes = document.getElementById('sup-notes').value;
+
+                if (!name || !phone) {
+                    Toast.show("Insira as informações de contato.", "error");
+                    return;
+                }
+
+                if (id) {
+                    const idx = AppState.state.suppliers.findIndex(x => x.id === id);
+                    if (idx !== -1) {
+                        AppState.state.suppliers[idx] = { id, name, phone, rating, notes };
+                        Toast.show("Cadastro de parceiro atualizado!");
+                    }
+                } else {
+                    AppState.state.suppliers.push({
+                        id: Date.now().toString(),
+                        name, phone, rating, notes
+                    });
+                    Toast.show("Novo fornecedor cadastrado!");
+                }
+
+                AppState.notify();
+                Modal.close();
+                this.renderCurrentPage();
+            },
+
+            deleteSupplier(id) {
+                AppState.state.suppliers = AppState.state.suppliers.filter(s => s.id !== id);
+                AppState.notify();
+                this.renderCurrentPage();
+                Toast.show("Fornecedor removido.", "error");
+            },
+
+            // CONFIGURAÇÕES E MANUTENÇÃO
+            saveSettings() {
+                const inputBudget = document.getElementById('settings-budget');
+                const val = Validators.parseFloat(inputBudget.value);
+                
+                if (val <= 0) {
+                    Toast.show("Valor de orçamento incorreto.", "error");
+                    return;
+                }
+
+                AppState.state.settings.totalBudget = val;
+                AppState.notify();
+                Toast.show("Definições globais aplicadas com sucesso!");
+            },
+
+            confirmResetSystem() {
+                const modalBody = `
+                    <div class="space-y-3">
+                        <p class="text-xs text-slate-500">Você está prestes a apagar todos os registros da obra do seu navegador. Esta ação não poderá ser revertida.</p>
+                        <p class="text-xs font-bold text-rose-500"><i class="fa-solid fa-triangle-exclamation"></i> Os dados do navegador (LocalStorage) serão totalmente deletados.</p>
+                    </div>
+                `;
+
+                const modalFooter = `
+                    <button onclick="Modal.close()" class="px-4 py-2 text-sm font-semibold text-slate-500">Cancelar</button>
+                    <button onclick="UI.resetSystem()" class="px-5 py-2 text-sm font-bold bg-rose-500 text-white rounded-xl">Sim, Apagar Tudo</button>
+                `;
+
+                Modal.open("Confirmar Limpeza de Dados", modalBody, modalFooter);
+            },
+
+            resetSystem() {
+                StorageService.reset();
+                AppState.init();
+                Modal.close();
+                this.renderCurrentPage();
+                Toast.show("Sistema restaurado aos valores padrão!", "error");
+            },
+
+            exportData() {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(AppState.state, null, 2));
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.setAttribute("href", dataStr);
+                downloadAnchor.setAttribute("download", `obra-backup-${new Date().toISOString().split('T')[0]}.json`);
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+                Toast.show("Backup exportado com sucesso!");
+            },
+
+            showImportModal() {
+                const modalBody = `
+                    <div class="space-y-4">
+                        <p class="text-xs text-slate-500">Selecione o arquivo backup (.json) para carregar os dados cadastrados.</p>
+                        <div>
+                            <input type="file" id="import-file-selector" accept=".json" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100">
+                        </div>
+                    </div>
+                `;
+
+                const modalFooter = `
+                    <button onclick="Modal.close()" class="px-4 py-2 text-sm font-semibold text-slate-500">Cancelar</button>
+                    <button onclick="UI.importData()" class="px-5 py-2 text-sm font-bold bg-brand-500 text-white rounded-xl">Carregar Dados</button>
+                `;
+
+                Modal.open("Importar Base de Dados", modalBody, modalFooter);
+            },
+
+            importData() {
+                const fileInput = document.getElementById('import-file-selector');
+                if (!fileInput || !fileInput.files[0]) {
+                    Toast.show("Selecione um arquivo de backup primeiro.", "error");
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const importedState = JSON.parse(e.target.result);
+                        if (importedState.materials && importedState.expenses && importedState.settings) {
+                            AppState.state = importedState;
+                            AppState.notify();
+                            Modal.close();
+                            UI.renderCurrentPage();
+                            Toast.show("Base de dados restaurada!");
+                        } else {
+                            Toast.show("O arquivo importado não possui uma estrutura de dados compatível.", "error");
+                        }
+                    } catch (err) {
+                        Toast.show("Erro ao processar arquivo JSON.", "error");
+                    }
+                };
+                reader.readAsText(fileInput.files[0]);
+            },
+
+            quickConvert(formula) {
+                Toast.show(`Referência rápida: ${formula}`);
+            },
+
+            // CALCULADORA AUXILIAR DO SISTEMA
+            openCalculatorModal() {
+                const modalBody = `
+                    <div class="space-y-4">
+                        <div class="p-4 bg-slate-50 dark:bg-slate-850 rounded-2xl border border-slate-200 dark:border-slate-700 text-right">
+                            <span class="text-xs text-slate-400 block h-4" id="calc-expression"></span>
+                            <span class="text-2xl font-bold text-slate-800 dark:text-white" id="calc-result">0</span>
+                        </div>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="UI.pressCalc('C')" class="col-span-2 py-3 bg-rose-500 text-white font-bold rounded-xl hover:bg-rose-600 transition-colors">C</button>
+                            <button onclick="UI.pressCalc('/')" class="py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-xl">/</button>
+                            <button onclick="UI.pressCalc('*')" class="py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-xl">*</button>
+                            
+                            <button onclick="UI.pressCalc('7')" class="py-3 bg-slate-50 dark:bg-slate-850 text-slate-700 dark:text-slate-300 font-bold rounded-xl">7</button>
+                            <button onclick="UI.pressCalc('8')" class="py-3 bg-slate-50 dark:bg-slate-850 text-slate-700 dark:text-slate-300 font-bold rounded-xl">8</button>
+                            <button onclick="UI.pressCalc('9')" class="py-3 bg-slate-50 dark:bg-slate-850 text-slate-700 dark:text-slate-300 font-bold rounded-xl">9</button>
+                            <button onclick="UI.pressCalc('-')" class="py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-xl">-</button>
+                            
+                            <button onclick="UI.pressCalc('4')" class="py-3 bg-slate-50 dark:bg-slate-850 text-slate-700 dark:text-slate-300 font-bold rounded-xl">4</button>
+                            <button onclick="UI.pressCalc('5')" class="py-3 bg-slate-50 dark:bg-slate-850 text-slate-700 dark:text-slate-300 font-bold rounded-xl">5</button>
+                            <button onclick="UI.pressCalc('6')" class="py-3 bg-slate-50 dark:bg-slate-850 text-slate-700 dark:text-slate-300 font-bold rounded-xl">6</button>
+                            <button onclick="UI.pressCalc('+')" class="py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-xl">+</button>
+                            
+                            <button onclick="UI.pressCalc('1')" class="py-3 bg-slate-50 dark:bg-slate-850 text-slate-700 dark:text-slate-300 font-bold rounded-xl">1</button>
+                            <button onclick="UI.pressCalc('2')" class="py-3 bg-slate-50 dark:bg-slate-850 text-slate-700 dark:text-slate-300 font-bold rounded-xl">2</button>
+                            <button onclick="UI.pressCalc('3')" class="py-3 bg-slate-50 dark:bg-slate-850 text-slate-700 dark:text-slate-300 font-bold rounded-xl">3</button>
+                            <button onclick="UI.pressCalc('=')" class="row-span-2 py-7 bg-brand-500 text-white font-bold rounded-xl hover:bg-brand-600 transition-colors">=</button>
+                            
+                            <button onclick="UI.pressCalc('0')" class="col-span-2 py-3 bg-slate-50 dark:bg-slate-850 text-slate-700 dark:text-slate-300 font-bold rounded-xl">0</button>
+                            <button onclick="UI.pressCalc('.')" class="py-3 bg-slate-50 dark:bg-slate-850 text-slate-700 dark:text-slate-300 font-bold rounded-xl">.</button>
+                        </div>
+                    </div>
+                `;
+
+                const modalFooter = `
+                    <button onclick="Modal.close()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-650 font-semibold text-xs rounded-xl transition-all">Fechar</button>
+                `;
+
+                Modal.open("Calculadora Auxiliar", modalBody, modalFooter);
+                window.calculatorInput = "";
+            },
+
+            pressCalc(key) {
+                const expr = document.getElementById('calc-expression');
+                const res = document.getElementById('calc-result');
+                if (!expr || !res) return;
+
+                if (key === 'C') {
+                    window.calculatorInput = "";
+                    expr.textContent = "";
+                    res.textContent = "0";
+                } else if (key === '=') {
+                    try {
+                        const safeExpr = window.calculatorInput.replace(/[^0-9+\-*/.]/g, '');
+                        const evaluated = Function(`"use strict"; return (${safeExpr})`)();
+                        res.textContent = Validators.formatNumber(evaluated, 2);
+                        window.calculatorInput = evaluated.toString();
+                    } catch (e) {
+                        res.textContent = "Erro";
+                        window.calculatorInput = "";
+                    }
+                } else {
+                    window.calculatorInput += key;
+                    expr.textContent = window.calculatorInput;
+                }
+            }
+        };
+
+        // 10. INICIALIZAÇÃO DO ECOSSISTEMA SPA
+        document.addEventListener('DOMContentLoaded', () => {
+            AppState.init();
+            
+            AppState.subscribe(() => {
+                UI.updateSidebarSummary();
+            });
+
+            UI.init();
+            Router.init();
+        });
+    </script>
+</body>
+</html>
+
+```
